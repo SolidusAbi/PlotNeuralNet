@@ -27,29 +27,34 @@
 %% Draw Layer Blocks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pic[shift={(2,-4,0)}] at (0,0,0) {Box={name=ref_residual, %caption=Residual,%
+\pic[shift={(0,0,0)}] at (0,0,0) {Box={name=ref_residual, %caption=Residual,%
         fill=\Residual, height=.4,width={.4},depth=.4, scale=1}}; 
 
-\pic[shift={(2,0,0)}] at (ref_residual-east) {Box={name=ref_y_avg_pool, %caption=YAverage,%
+\pic[shift={(3,0,0)}] at (ref_residual-east) {Box={name=ref_y_avg_pool, %caption=YAverage,%
         fill=\PoolColor, height=.1,width={.2},depth=.4, scale=2}}; 
 
-\pic[shift={(2,0,0)}] at (ref_y_avg_pool-east) {Box={name=ref_x_avg_pool, %caption=XAverage,%
+\pic[shift={(3,0,0)}] at (ref_y_avg_pool-east) {Box={name=ref_x_avg_pool, %caption=XAverage,%
         fill=\PoolColor, height=.4,width={.2},depth=.1, scale=2}}; 
 
-\pic[shift={(2,0,0)}] at (ref_x_avg_pool-east) {Box={name=ref_concat, %
+\pic[shift={(3,0,0)}] at (ref_x_avg_pool-east) {Box={name=ref_concat, %
         fill=\Concat, height=.1,width={.1},depth=.8, scale=2}};
 
-\pic[shift={(2,0,0)}] at (ref_concat-east) {RightBandedBox={name=ref_embedding, %
-        fill=\ConvColor,bandfill=\ConvReluColor, height=.1,width={.1},depth=.8, scale=2}}; 
-
-\pic[shift={(5.5,-5.2,0)}] at (0,0,0) {RightBandedBox={name=ref_split_sigmoid,%
-        fill=\ConvColor,bandfill=\ConvSigmoidColor, height=.4,width={.4},depth=.4, scale=1}}; 
-
-\pic[shift={(2,0,0)}] at (ref_split_sigmoid-east) {Box={name=ref_reweight, %
+\pic[shift={(3,0,0)}] at (ref_concat-east) {Box={name=ref_reweight, %
         fill=\SumColor,height=.4, width={.4},depth=.4, scale=1}}; 
 
-\pic[shift={(2,0,0)}] at (ref_reweight-west) {Box={name=output, %
+\pic[shift={(2,-2,0)}] at (0,0,0) {RightBandedBox={name=ref_split_y_sigmoid,%
+        fill=\ConvColor,bandfill=\ConvSigmoidColor, height=.1,width={.2},depth=.4, scale=2}}; 
+
+\pic[shift={(3,0,0)}] at (ref_split_y_sigmoid-east) {RightBandedBox={name=ref_split_x_sigmoid,%
+        fill=\ConvColor,bandfill=\ConvSigmoidColor, height=.4,width={.2},depth=.1, scale=2}}; 
+
+\pic[shift={(3,0,0)}] at (ref_split_x_sigmoid-east) {RightBandedBox={name=ref_embedding, %
+        fill=\ConvColor,bandfill=\ConvReluColor, height=.1,width={.1},depth=.8, scale=2}}; 
+
+\pic[shift={(3,0,0)}] at (ref_embedding-west) {Box={name=output, %
         fill=\Output,height=.4, width={.4},depth=.4, scale=1}}; 
+
+
 
 \end{tikzpicture}
 \end{document}\grid
