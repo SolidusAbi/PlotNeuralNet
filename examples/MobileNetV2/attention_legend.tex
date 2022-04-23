@@ -1,0 +1,55 @@
+\documentclass[border=15pt, multi, tikz]{standalone}
+\usepackage{import}
+\subimport{../../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\ConvSigmoidColor{rgb:blue,5;green,2.5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\DcnvColor{rgb:blue,5;green,2.5;white,5}
+\def\SoftmaxColor{rgb:magenta,5;black,7}
+\def\SumColor{rgb:blue,5;green,15}
+\def\Residual{rgb:blue,0.05;green,0.05;red,0.05}
+\def\Concat{rgb:blue,255;green,0.05;red,0.05}
+\def\Output{rgb:blue,.2;green,.1;red,.8}
+
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.4]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw Layer Blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pic[shift={(2,-4,0)}] at (0,0,0) {Box={name=ref_residual, %caption=Residual,%
+        fill=\Residual, height=.4,width={.4},depth=.4, scale=1}}; 
+
+\pic[shift={(2,0,0)}] at (ref_residual-east) {Box={name=ref_y_avg_pool, %caption=YAverage,%
+        fill=\PoolColor, height=.1,width={.2},depth=.4, scale=2}}; 
+
+\pic[shift={(2,0,0)}] at (ref_y_avg_pool-east) {Box={name=ref_x_avg_pool, %caption=XAverage,%
+        fill=\PoolColor, height=.4,width={.2},depth=.1, scale=2}}; 
+
+\pic[shift={(2,0,0)}] at (ref_x_avg_pool-east) {Box={name=ref_concat, %
+        fill=\Concat, height=.1,width={.1},depth=.8, scale=2}};
+
+\pic[shift={(2,0,0)}] at (ref_concat-east) {RightBandedBox={name=ref_embedding, %
+        fill=\ConvColor,bandfill=\ConvReluColor, height=.1,width={.1},depth=.8, scale=2}}; 
+
+\pic[shift={(5.5,-5.2,0)}] at (0,0,0) {RightBandedBox={name=ref_split_sigmoid,%
+        fill=\ConvColor,bandfill=\ConvSigmoidColor, height=.4,width={.4},depth=.4, scale=1}}; 
+
+\pic[shift={(2,0,0)}] at (ref_split_sigmoid-east) {Box={name=ref_reweight, %
+        fill=\SumColor,height=.4, width={.4},depth=.4, scale=1}}; 
+
+\pic[shift={(2,0,0)}] at (ref_reweight-west) {Box={name=output, %
+        fill=\Output,height=.4, width={.4},depth=.4, scale=1}}; 
+
+\end{tikzpicture}
+\end{document}\grid

@@ -13,6 +13,7 @@
 \def\SumColor{rgb:blue,5;green,15}
 \def\Residual{rgb:blue,0.05;green,0.05;red,0.05}
 \def\Concat{rgb:blue,255;green,0.05;red,0.05}
+\def\Output{rgb:blue,.2;green,.1;red,.8}
 
 \def\FcColor{rgb:blue,5;red,2.5;white,5}
 \def\FcReluColor{rgb:blue,5;red,5;white,4}
@@ -20,7 +21,7 @@
 
 \begin{document}
 \begin{tikzpicture}
-\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.5]
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.4]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw Layer Blocks
@@ -28,46 +29,46 @@
 % \node[canvas is zy plane at x=0] (temp) at (-3,0,0) {\includegraphics[width=8cm,height=8cm]{cats.jpg}};
 % conv1_1,conv1_2,%pool1 
 
-\pic[shift={(0,0,0)}] at (0,0,0) {Box={name=residual, caption=Residual,%
+\pic[shift={(0,0,0)}] at (0,0,0) {Box={name=residual, %caption=Residual,
         xlabel={{"C",}},zlabel=W, ylabel=H, fill=\Residual,%
-        height=20,width={4},depth=20}}; 
+        height=.8,width={.4},depth=.8, scale=1}}; 
 
-\pic[shift={(5,1,3)}] at (residual-east) {Box={name=y_avg_pool, caption=YAverage,%
+\pic[shift={(3,1,3)}] at (residual-east) {Box={name=y_avg_pool,
         xlabel={{"C",}},zlabel=W, ylabel=1, fill=\PoolColor,%
-        height=1,width={4},depth=20}}; 
+        height=.2,width={.4},depth=.8, scale=1}}; 
 
-\pic[shift={(5,2,-3)}] at (residual-east) {Box={name=x_avg_pool, caption={XAverage}, %
+\pic[shift={(2,2,0)}] at (residual-east) {Box={name=x_avg_pool, 
         xlabel={{"C",}},zlabel=1, ylabel=H, fill=\PoolColor,%
-        height=20,width={4},depth=1}}; 
+        height=.8,width={.4},depth=.2, scale=1}}; 
 
-\pic[shift={(10,2,0)}] at (residual-east) {Box={name=concat, %
+\pic[shift={(4,1,0)}] at (residual-east) {Box={name=concat, %
         ylabel=1, fill=\Concat,%
-        height=1,width={1},depth=40}};
+        height=.2,width={.1},depth=1.8, scale=1}};
 \pic[shift={(0,0,0)}] at (concat-east) {RightBandedBox={name=embedding, %
         xlabel={{"C/r",}},zlabel={{W+H}}, fill=\ConvColor,bandfill=\ConvReluColor,%
-        height=1,width={2},depth=40}}; 
+        height=.2,width={.3},depth=1.8, scale=1}}; 
 
-\pic[shift={(5,-1,3)}] at (embedding-east) {RightBandedBox={name=y_split,%
+\pic[shift={(2,0,3)}] at (embedding-east) {RightBandedBox={name=y_split,%
         xlabel={{"C",}},zlabel=W, ylabel=1, fill=\ConvColor,bandfill=\ConvSigmoidColor,%
-        height=1,width={4},depth=20}}; 
+        height=.2,width={.44},depth=.8, scale=1}}; 
 
-\pic[shift={(5,0,-3)}] at (embedding-east) {RightBandedBox={name=x_split, %
+\pic[shift={(2,0,-2)}] at (embedding-east) {RightBandedBox={name=x_split, %
         xlabel={{"C",}},zlabel=1, ylabel=H, fill=\ConvColor,bandfill=\ConvSigmoidColor,%
-        height=20,width={4},depth=1}}; 
+        height=.8,width={.4},depth=.2, scale=1}}; 
 
-\pic[shift={(10,0,0)}] at (concat-east) {Box={name=reweight, %
+\pic[shift={(8.5,0,0)}] at (residual-east) {Box={name=reweight, %
         xlabel={{"C",}},zlabel=W, ylabel=H, fill=\SumColor,%
-        height=20,width={4},depth=20}}; 
+        height=.8,width={.4},depth=.8, scale=1}}; 
 
 
 %% Elementwise dot
-\pic[shift={(22,-2.5,0)}] at (residual-east) {Ball={name=dot, caption=Re-weight,%
+\pic[shift={(9.1,-2,0)}] at (residual-east) {Ball={name=dot, %caption=Re-weight,
     fill=\SumColor,opacity=0.6,%
-    radius=2.5,logo=$*$}};
+    radius=.2, scale=1,logo=$*$}};
 
-\pic[shift={(26,0,0)}] at (residual-west) {Box={name=output, caption=Output,%
-    xlabel={{"C",}},zlabel=W, ylabel=H, fill=\Residual,%
-    height=20,width={4},depth=20}}; 
+\pic[shift={(10.5,0,0)}] at (residual-west) {Box={name=output, %caption=Output,
+    xlabel={{"C",}},zlabel=W, ylabel=H, fill=\Output,%
+    height=.8,width={.4},depth=.8, scale=1}}; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw connections
