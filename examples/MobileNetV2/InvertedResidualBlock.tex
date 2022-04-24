@@ -1,0 +1,103 @@
+\documentclass[border=8pt, multi, tikz]{standalone}
+%\usepackage{blocks}
+\usepackage{import}
+\subimport{../../layers/}{init}
+\usetikzlibrary{positioning}
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}
+\def\Input{rgb:red,76;green,114;blue,176}
+\def\Output{rgb:white,1;black,3}
+
+
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width =0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw Encoder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pic[shift={(0,0,0)}] at (0,0,0) {Box={name=cr4,%
+        fill=\UnpoolColor, height=1,width=0.5,depth=1, scale=1}};
+
+\pic[shift={(0,0,0)}] at (cr4-west) {Box={name=cr4_conv,%
+        fill=\PoolColor, height=.2,width=.5,depth=.2, scale=1}};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bottleneck
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pic[shift={(1,0,0)}] at (cr4-east) {Box={name=cr5,%
+        fill=\Input, height=1,width={1.2},depth=1.2, scale=1}};
+
+\pic[shift={(0,0,0)}] at (cr5-east) {Box={name=cr5_conv,%
+        fill=\PoolColor, height=.5,width=.01,depth=.5, scale=1}};
+
+\pic[shift={(1,0,0)}] at (cr5-east) {Box={name=cr5_1,%
+        fill=\Input, height=1,width={1.2},depth=1.2, scale=1}};
+
+\pic[shift={(0,0,0)}] at (cr5_1-west) {Box={name=cr5_1_conv,%
+        fill=\PoolColor, height=.2,width=1.2,depth=.2, scale=1}};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw Decoder 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pic[shift={(1,0,0)}] at (cr5_1-east) {Box={name=cat4,
+        fill=\Output,opacity=0.2,height=1,width=0.5,depth=1, scale=1}};    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Draw connections
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\path (cr4-southeast) -- (cr4-northeast) coordinate[pos=2] (cr4-top) ;
+\path (cat4-south)  -- (cat4-north)  coordinate[pos=2] (cat4-top) ;
+\draw [copyconnection]  (cr4-northeast)  
+-- node {\copymidarrow}(cr4-top)
+-- node {\copymidarrow}(cat4-top)
+-- node {\copymidarrow} (cat4-north);
+
+\draw[densely dashed]
+    (cr4_conv-east)++(0, 1*.1, 1*.1) coordinate(a) -- (cr5-west)
+    (cr4_conv-east)++(0,-1*.1, 1*.1) coordinate(b) -- (cr5-west)
+    (cr4_conv-east)++(0,-1*.1,-1*.1) coordinate(c) -- (cr5-west)
+    (cr4_conv-east)++(0, 1*.1,-1*.1) coordinate(d) -- (cr5-west)
+    
+    (a)--(b)--(c)--(d)
+    ;
+
+\draw[densely dashed]
+    (cr5_conv-east)++(0, 1*.25, 1*.25) coordinate(a) -- (cr5_1-west)
+    (cr5_conv-east)++(0,-1*.25, 1*.25) coordinate(b) -- (cr5_1-west)
+    (cr5_conv-east)++(0,-1*.25,-1*.25) coordinate(c) -- (cr5_1-west)
+    (cr5_conv-east)++(0, 1*.25,-1*.25) coordinate(d) -- (cr5_1-west)
+    
+    (a)--(b)--(c)--(d)
+    ;
+
+\draw[densely dashed]
+    (cr5_1_conv-east)++(0, 1*.1, 1*.1) coordinate(a) -- (cat4-west)
+    (cr5_1_conv-east)++(0,-1*.1, 1*.1) coordinate(b) -- (cat4-west)
+    (cr5_1_conv-east)++(0,-1*.1,-1*.1) coordinate(c) -- (cat4-west)
+    (cr5_1_conv-east)++(0, 1*.1,-1*.1) coordinate(d) -- (cat4-west)
+    
+    (a)--(b)--(c)--(d)
+    ;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Legend
+
+\pic[shift={(1.8,-1.5,0)}] at (0,0,0) {Box={name=legend_conv3x3,%
+        fill=\PoolColor, height=.5,width=.01,depth=.5, scale=1}};
+
+\pic[shift={(2.5,0,0)}] at (legend_conv3x3-west) {Box={name=legend_conv1x1,%
+        fill=\PoolColor, height=.2,width=.5,depth=.2, scale=1}};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{tikzpicture}
+\end{document}
